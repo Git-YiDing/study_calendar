@@ -173,12 +173,19 @@
             container.innerHTML = ''; 
             const TARGET_HOURS = 8; 
 
+            // 🌟 新增：英文月份字典
+            const monthNames = ["January", "February", "March", "April", "May", "June", 
+                              "July", "August", "September", "October", "November", "December"];
+
             sortedMonths.forEach(monthStr => {
                 const [year, month] = monthStr.split('-').map(Number);
                 
                 const monthSection = document.createElement('div');
                 monthSection.className = 'month-section';
-                monthSection.innerHTML = `<div class="month-title">${year}年 ${month}月</div>`;
+                
+                // 🌟 使用字典将数字转换为英文月份名称
+                const monthNameEn = monthNames[month - 1];
+                monthSection.innerHTML = `<div class="month-title">${monthNameEn} ${year}</div>`;
 
                 const gridDiv = document.createElement('div');
                 gridDiv.className = 'calendar-grid';
