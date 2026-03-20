@@ -113,29 +113,31 @@
 
 <h1>📅 学习日历时间墙</h1>
     
-    <div class="upload-area">
-        <label for="fileInput"><strong>上传你的学习记录 (.json): </strong></label>
-        <input type="file" id="fileInput" accept=".json">
+    <div id="calendars-container">
+        <h3 id="loading-text">🔄 正在自动读取数据中...</h3>
     </div>
 
-    <div id="calendars-container"></div>
-
     <script>
-        document.getElementById('fileInput').addEventListener('change', function(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const jsonData = JSON.parse(e.target.result);
-                    processAndRenderCalendar(jsonData);
-                } catch (error) {
-                    alert('文件解析失败，请确保上传的是有效的 JSON 文件！');
+        // 核心改动：网页一加载，就自动去同目录下寻找 data.json 文件
+        window.onload = async function() {
+            try {
+                // 使用 Fetch API 自动获取文件
+                const response = await fetch('./data.json');
+                if (!response.ok) {
+                    throw new Error('未找到数据文件');
                 }
-            };
-            reader.readAsText(file);
-        });
+                const jsonData = await response.json();
+                
+                // 数据获取成功，开始画图
+                processAndRenderCalendar(jsonData);
+            } catch (error) {
+                // 如果找不到文件，显示错误提示
+                document.getElementById('calendars-container').innerHTML = 
+                    `<p style="color: #ef5350; margin-top: 50px; font-weight: bold;">
+                        ❌ 数据加载失败！请确保你在 GitHub 仓库中上传了名为 <b>data.json</b> 的文件。
+                    </p>`;
+            }
+        };
 
         function processAndRenderCalendar(data) {
             const dailyStats = {};
